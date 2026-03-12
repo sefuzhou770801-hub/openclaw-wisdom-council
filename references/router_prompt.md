@@ -7,6 +7,7 @@
 2. 再从 100 位专属 persona prompt 里检索候选
 3. 再组出 10 位互补议会
 4. 再把用户问题注入对应原 prompt
+5. 再为每位人物准备独立调用
 
 你拥有：
 
@@ -14,6 +15,7 @@
 2. `persona_prompt_index.json`：100 位人物的检索索引
 3. `persona_prompt_library_100.md`：100 位人物原 prompt 正文
 4. `scripts/persona_prompt_library.py`：检索与提取工具
+5. `scripts/build_independent_council_runbook.py`：独立调用 runbook 生成工具
 
 ## Step 1：分类
 
@@ -47,18 +49,15 @@
 
 检索串不是自然段，而是为了找对人物的关键词包。
 
-例如：
-
-```text
-怎么学英语 学习方法 自律 习惯 练习 输出 口语 拖延 不敢开口
-```
-
 ## Step 3：检索 100 人 prompt 库
 
 优先调用：
 
 ```bash
-python3 scripts/persona_prompt_library.py search   --index references/persona_prompt_index.json   --query "<检索串>"   --top 15
+python3 scripts/persona_prompt_library.py search \
+  --index references/persona_prompt_index.json \
+  --query "<检索串>" \
+  --top 15
 ```
 
 拿到 top 12 到 15 位以后，再做人为筛选。
@@ -85,12 +84,18 @@ python3 scripts/persona_prompt_library.py search   --index references/persona_pr
 
 `persona_prompt_template.md` 只在 prompt 库没有这个人物时才允许 fallback。
 
-## Step 6：提取入选 prompt
+## Step 6：生成独立调用 runbook
 
-议会名单确定后，必须提取对应人物的原 prompt，并注入用户困境：
+议会名单确定后，必须把 10 位人物转成 10 条独立调用，再额外生成 1 条单独总结调用。
+
+优先调用：
 
 ```bash
-python3 scripts/persona_prompt_library.py extract   --source references/persona_prompt_library_100.md   --names "<10位人物名字，用逗号分隔>"   --user-dilemma "<用户原话>"
+python3 scripts/build_independent_council_runbook.py \
+  --source references/persona_prompt_library_100.md \
+  --names "<10位人物名字，用逗号分隔>" \
+  --user-dilemma "<用户原话>" \
+  --synthesis-reference references/synthesis_prompt.md
 ```
 
 ## Step 7：会前自检
@@ -104,3 +109,5 @@ python3 scripts/persona_prompt_library.py extract   --source references/persona_
 5. 每位入选人物都已经拿到了自己的原 prompt
 6. 没有任何人物被共享模板覆盖掉原本专属 prompt
 7. 议会是互补关系，不以制造人物分歧为目标
+8. 10 位人物已被拆成 10 次独立调用
+9. 总结已被拆成单独的第 11 次调用

@@ -1,6 +1,6 @@
 ---
 name: wisdom-council
-description: 先把用户问题结构化判题，再从 100 位用户自写的历史智者专属提示词中动态选出最贴题的 10 位，逐个注入用户困境并让他们各自发言，最后收束成自然结论与可执行方案。适用于 OpenClaw 中处理人生、关系、职业、创业、焦虑、拖延、价值冲突、失败、学习方法等复杂问题，尤其适合“先判题，再选人，再调用原 prompt，再顺序分析，再收束”的多视角决策支持。
+description: 先把用户问题结构化判题，再从 100 位用户自写的历史智者专属提示词中动态选出最贴题的 10 位，逐个注入用户困境并进行 10 次独立人物调用，最后再做 1 次独立总结调用，收束成自然结论与可执行方案。适用于 OpenClaw 中处理人生、关系、职业、创业、焦虑、拖延、价值冲突、失败、学习方法等复杂问题，尤其适合“先判题，再选人，再调用原 prompt，再独立生成，再单独收束”的多视角决策支持。
 metadata:
   openclaw:
     emoji: "🧠"
@@ -12,17 +12,18 @@ metadata:
 
 这不是“列出十个名字”的系统，而是一个调用 100 位专属 persona prompt 的历史智慧议会。
 
-这里最重要的约束只有一条：
+这里最重要的约束只有两条：
 
 - 100 位智者的 prompt 正文是人格源，不要重写，不要改写，不要再用共享模板覆盖它们
+- 10 位智者必须 10 次独立调用，最后的收束必须是第 11 次独立调用
 
 系统要做的是：
 
 - 先判题
 - 再从 100 位人物里选人
 - 再把用户问题注入对应人物的原 prompt
-- 再让他们顺序发言
-- 最后才做自然收束与执行方案
+- 再让他们分别独立发言
+- 最后才做一次单独的综合收束
 
 ## 核心链路
 
@@ -32,8 +33,8 @@ metadata:
   -> Prompt Search：从 100 位专属 prompt 里检索候选
   -> Council Builder：组 10 人议会
   -> Prompt Hydration：把 {{USER_DILEMMA}} 注入入选人物原 prompt
-  -> Solo Statements：10 位人物逐个发言
-  -> Synthesizer：最后收束成自然结论与执行方案
+  -> Independent Sage Calls：10 位人物分别独立调用
+  -> Independent Synthesis Call：单独做第 11 次总结调用
 ```
 
 ## 读取顺序
@@ -43,8 +44,9 @@ metadata:
 3. 必要时读取 [references/persona_prompt_library_100.md](./references/persona_prompt_library_100.md)
 4. 读取 [references/router_prompt.md](./references/router_prompt.md)
 5. 读取 [references/renderer_prompt.md](./references/renderer_prompt.md)
-6. 用 [references/eval_cases.json](./references/eval_cases.json) 做 sanity check
-7. 只有在入选人物不在 100 人 prompt 库时，才回退读取 [references/sages.json](./references/sages.json) 和 [references/persona_prompt_template.md](./references/persona_prompt_template.md)
+6. 读取 [references/synthesis_prompt.md](./references/synthesis_prompt.md)
+7. 用 [references/eval_cases.json](./references/eval_cases.json) 做 sanity check
+8. 只有在入选人物不在 100 人 prompt 库时，才回退读取 [references/sages.json](./references/sages.json) 和 [references/persona_prompt_template.md](./references/persona_prompt_template.md)
 
 ## Prompt Source Of Truth
 
@@ -53,6 +55,8 @@ metadata:
 - 人格源文件是 [references/persona_prompt_library_100.md](./references/persona_prompt_library_100.md)
 - 检索索引是 [references/persona_prompt_index.json](./references/persona_prompt_index.json)
 - 检索与提取工具是 [scripts/persona_prompt_library.py](./scripts/persona_prompt_library.py)
+- 独立调用 runbook 工具是 [scripts/build_independent_council_runbook.py](./scripts/build_independent_council_runbook.py)
+- 总结提示词是 [references/synthesis_prompt.md](./references/synthesis_prompt.md)
 
 硬规则：
 
@@ -90,7 +94,10 @@ metadata:
 可直接调用：
 
 ```bash
-python3 scripts/persona_prompt_library.py search   --index references/persona_prompt_index.json   --query "<用户原话 + 主分野 + 副分野 + 冲突 + 卡点>"   --top 15
+python3 scripts/persona_prompt_library.py search \
+  --index references/persona_prompt_index.json \
+  --query "<用户原话 + 主分野 + 副分野 + 冲突 + 卡点>" \
+  --top 15
 ```
 
 ## Council Builder 规则
@@ -113,17 +120,43 @@ python3 scripts/persona_prompt_library.py search   --index references/persona_pr
 可直接调用：
 
 ```bash
-python3 scripts/persona_prompt_library.py extract   --source references/persona_prompt_library_100.md   --names "孔子,王阳明,庄子"   --user-dilemma "<用户原话>"
+python3 scripts/persona_prompt_library.py extract \
+  --source references/persona_prompt_library_100.md \
+  --names "孔子,王阳明,庄子" \
+  --user-dilemma "<用户原话>"
 ```
 
 如果用户只写简称，例如“费曼”，脚本会自动尽量解析到唯一全名。
 
+## 独立调用规则
+
+这是当前 skill 的硬约束，不是建议：
+
+1. 每位智者必须单独调用一次。
+2. 10 位智者不能在同一次生成里共同输出。
+3. 总结不能和任一智者共用同一次生成。
+4. 总结必须在 10 位智者全部完成后，再单独调用一次。
+5. 总结调用只能读入：
+   - 用户原始问题
+   - 10 位智者各自独立生成的结果
+6. 总结调用不能重写智者正文，只能收束。
+
+可直接生成独立调用 runbook：
+
+```bash
+python3 scripts/build_independent_council_runbook.py \
+  --source references/persona_prompt_library_100.md \
+  --names "孔子,庄子,理查德·费曼" \
+  --user-dilemma "<用户原话>" \
+  --synthesis-reference references/synthesis_prompt.md
+```
+
 ## 发言与收束规则
 
 1. 10 位人物完整发言必须在前。
-2. 每位人物的单独发言，都来自该人物自己的原 prompt。
+2. 每位人物的单独发言，都来自该人物自己的原 prompt，并且来自独立调用结果。
 3. 默认不要安排人物之间互相争论或互相点评。
-4. 最后的综合结论，来自前面人物发言的提炼。
+4. 最后的综合结论，来自单独的第 11 次总结调用。
 5. 不要在发言前先把答案总结掉。
 6. 默认不要在用户可见输出里打出 `圆桌辩论`、`为什么是这十位`、`行动方案` 这些标题。
 7. 每位人物名字下可以补一句极短人物简介，但不要写成 `个人简介：` 这种标签。
@@ -150,7 +183,7 @@ python3 scripts/persona_prompt_library.py extract   --source references/persona_
 1. 逐位智者发言
 2. 最后一段综合结论与执行方案
 
-若用户明确要求调试，再额外展示选人依据或 prompt 摘要。
+若用户明确要求调试，再额外展示选人依据、独立调用 runbook 或 prompt 摘要。
 
 ## 质量标准
 
@@ -163,6 +196,7 @@ python3 scripts/persona_prompt_library.py extract   --source references/persona_
 
 如果 10 段发言去掉名字以后仍然像同一个人写的，视为失败。
 如果某位人物明明在 100 人 prompt 库里，却仍然被共享模板重写，视为失败。
+如果 10 位人物不是独立调用，而是一次性合写，视为失败。
 如果输出里满是 `个人简介`、`我的核心思想是`、`我的裁决是`、`24小时之内` 这类提示词标签，也视为失败。
 
 ## 风险处理

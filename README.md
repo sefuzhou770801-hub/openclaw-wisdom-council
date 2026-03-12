@@ -24,7 +24,8 @@
 - 一个路由层，先判断用户问题属于什么分野
 - 一个检索层，从 100 人里挑最贴题的 10 位
 - 一个注入层，把用户困境塞进这 10 位人物各自的原 prompt
-- 一个收束层，让他们顺序发言，最后合成一个方案
+- 一个独立调用层，让这 10 位人物分别单独生成
+- 一个单独总结层，在第 11 次调用里收束成方案
 
 ## 怎么在 OpenClaw 里使用
 
@@ -42,25 +43,15 @@
 ```text
 在 OpenClaw 里说：
 用 $wisdom-council 分析：我应该怎么学英语？
-请展示这次命中的人物、每个人对应的原 prompt 摘要，以及用户困境如何被注入。
+请展示这次命中的人物、每个人对应的原 prompt 摘要、独立调用 runbook，以及用户困境如何被注入。
 ```
 
 这里的关键是：
 
 - 系统会优先调用你写好的原 prompt，而不是重新拼一份人格模板
+- 10 位智者必须 10 次独立调用，不允许同轮合写
+- 总结必须单独再跑一次，不能和人物正文混在一起
 - 普通模式下不会把整段内部 prompt 全吐出来
-- 外部展示给用户的，是保留人物判断风格、但仍然能直接读懂的中文
-- 如果结果读起来还像模板，说明路由或渲染失败，需要重写
-
-### 更好的提问方式
-
-如果你在 OpenClaw 里多给一点上下文，系统会更容易判题和选人。建议补充：
-
-- 你现在在什么处境
-- 你有哪些现实选项
-- 你最担心失去什么
-- 你最不能接受的结果是什么
-- 这个决定的时间窗口有多长
 
 ## 输出结构
 
@@ -71,10 +62,10 @@
 
 ## 这版 Skill 的关键变化
 
-- 现在是“100 位专属 prompt 库 + 动态路由 + 原 prompt 注入”，不是“1 个共享模板 + 10 个换名实例”
+- 现在是“100 位专属 prompt 库 + 动态路由 + 原 prompt 注入 + 10 次独立调用 + 1 次独立总结”
 - 人物人格的源头，是用户写好的 prompt 正文
 - 路由层只负责判题和选人，不负责重写人物
-- 默认不再强调人物之间的分歧，而是强调互补
+- 默认不再强调人物之间的分歧，而是强调独立人格发言后的互补
 - 共享模板只保留为 fallback，不再覆盖已有的专属 prompt
 
 ## 文件结构
@@ -83,9 +74,11 @@
 - [`references/persona_prompt_library_100.md`](./references/persona_prompt_library_100.md)：100 位人物的原始 prompt 库
 - [`references/persona_prompt_index.json`](./references/persona_prompt_index.json)：供检索用的 prompt 索引
 - [`scripts/persona_prompt_library.py`](./scripts/persona_prompt_library.py)：检索与提取原 prompt 的脚本
+- [`scripts/build_independent_council_runbook.py`](./scripts/build_independent_council_runbook.py)：生成 10 次独立调用 + 1 次总结调用的 runbook
+- [`references/synthesis_prompt.md`](./references/synthesis_prompt.md)：单独总结调用使用的提示词
 - [`references/taxonomy.json`](./references/taxonomy.json)：领域、冲突类型与规则
 - [`references/router_prompt.md`](./references/router_prompt.md)：问题分类与选人逻辑
-- [`references/renderer_prompt.md`](./references/renderer_prompt.md)：人物发言与收束逻辑
+- [`references/renderer_prompt.md`](./references/renderer_prompt.md)：独立人物发言与收束逻辑
 - [`references/eval_cases.json`](./references/eval_cases.json)：测试案例
 
 ## 边界
@@ -96,4 +89,5 @@
 - 把明显伤害关系包装成修复关系
 - 把法律、医疗、税务或投资问题当作纯智慧问题
 - 在人物已存在原 prompt 的情况下，偷偷改写成统一模板
+- 把 10 位人物塞进同一次调用里合写
 - 以抽象鼓励作为结尾

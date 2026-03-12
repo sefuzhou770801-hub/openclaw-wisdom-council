@@ -24,7 +24,8 @@ Its main engine is now:
 - a routing layer that classifies the problem first
 - a retrieval layer that selects the best 10 figures from those 100
 - an injection layer that fills each figure's original prompt with the user's dilemma
-- a synthesis layer that lets them speak in sequence and then converge into an action plan
+- an independent-call layer that runs those 10 figures separately
+- a final synthesis layer that runs once more as an 11th separate call
 
 ## How to Use This Skill in OpenClaw
 
@@ -42,25 +43,15 @@ Use $wisdom-council to help me decide whether I should quit my job and start a c
 ```text
 In OpenClaw, say:
 Use $wisdom-council to analyze: how should I learn English?
-Please show which figures were selected, the original prompt summary for each one, and how my dilemma was injected.
+Please show which figures were selected, the original prompt summary for each one, the independent-call runbook, and how my dilemma was injected.
 ```
 
 What matters here is:
 
 - the system should call the original persona prompts you wrote, not regenerate them from a shared template
+- the 10 sages must be run as 10 separate generations
+- the synthesis must be a separate 11th generation
 - normal mode should not dump the full internal prompts back to the user
-- the visible output should stay readable while preserving each figure's judgment style
-- if the result still feels templated, the routing or rendering has failed and should be rewritten
-
-### Better prompt shape
-
-Inside OpenClaw, the system works much better when you include:
-
-- your current situation
-- the real options in front of you
-- what you are most afraid of losing
-- what outcome you cannot accept
-- the time window for the decision
 
 ## Output Structure
 
@@ -71,10 +62,10 @@ The default output order is:
 
 ## What Changed in This Version
 
-- it is now “a 100-prompt persona library + dynamic routing + original prompt injection,” not “one shared template + ten renamed instances”
+- it is now “a 100-prompt persona library + dynamic routing + original prompt injection + 10 independent calls + 1 synthesis call”
 - the source of each figure's persona is the original prompt body
 - the router is responsible for classification and selection, not persona rewriting
-- the default output now emphasizes complementarity instead of forcing disagreements between figures
+- the default output emphasizes independent persona generation rather than a shared group voice
 - the shared template remains only as a fallback for figures not yet covered by the 100-prompt library
 
 ## File Structure
@@ -83,9 +74,11 @@ The default output order is:
 - [`references/persona_prompt_library_100.md`](./references/persona_prompt_library_100.md): the original 100-person prompt library
 - [`references/persona_prompt_index.json`](./references/persona_prompt_index.json): search index for the prompt library
 - [`scripts/persona_prompt_library.py`](./scripts/persona_prompt_library.py): lookup and extraction tooling for the original prompts
+- [`scripts/build_independent_council_runbook.py`](./scripts/build_independent_council_runbook.py): generates 10 independent sage calls plus 1 synthesis call
+- [`references/synthesis_prompt.md`](./references/synthesis_prompt.md): prompt for the separate synthesis pass
 - [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, and rules
 - [`references/router_prompt.md`](./references/router_prompt.md): classification and selection logic
-- [`references/renderer_prompt.md`](./references/renderer_prompt.md): persona rendering and synthesis logic
+- [`references/renderer_prompt.md`](./references/renderer_prompt.md): independent persona rendering and synthesis rules
 - [`references/eval_cases.json`](./references/eval_cases.json): test cases
 
 ## Boundaries
@@ -96,4 +89,5 @@ The system does not:
 - reframe obvious harm as relationship repair,
 - treat legal, medical, tax, or investment questions as purely wisdom questions,
 - silently overwrite existing persona prompts with a shared template,
+- ask one response to play all 10 sages at once,
 - end with abstract encouragement.
