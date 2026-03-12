@@ -15,18 +15,14 @@ They are blocked by missing judgment.
 - I know what I should do, but I keep procrastinating.
 - I care too much about what other people think.
 
-These questions rarely have a clean “correct” answer, but they still require a decision.
+These questions rarely have a clean answer, but they still require a decision.
 
-`Wisdom Council` is built for one thing:
-
-turn a human dilemma into a real clash of ideas, then converge on a decision you can act on.
-
-This is not roleplay.
-It is a decision-support thinking system.
+The core of `Wisdom Council` is not “listing ten names.”
+It is making ten historical figures speak through their own personalities and knowledge systems, then letting them debate before producing an action plan.
 
 ## How to Use This Skill in OpenClaw
 
-This repository is built as an OpenClaw skill. The simplest way to use it is to explicitly invoke `$wisdom-council` inside an OpenClaw conversation, then describe your dilemma as plainly as possible.
+This repository is built as an OpenClaw skill. The simplest way to use it is to explicitly invoke `$wisdom-council` inside an OpenClaw conversation.
 
 ### Minimal usage
 
@@ -35,9 +31,17 @@ In OpenClaw, say:
 Use $wisdom-council to help me decide whether I should quit my job and start a company.
 ```
 
+### If you want to debug persona prompts
+
+```text
+In OpenClaw, say:
+Use $wisdom-council to analyze: how can I improve my work efficiency?
+Please show the persona-prompt summary for each selected figure, their individual statements, and their roundtable debate.
+```
+
 ### Better prompt shape
 
-Inside OpenClaw, the system works much better when you include a little context. Try adding:
+Inside OpenClaw, the system works much better when you include:
 
 - your current situation
 - the real options in front of you
@@ -45,115 +49,30 @@ Inside OpenClaw, the system works much better when you include a little context.
 - what outcome you cannot accept
 - the time window for the decision
 
-Example:
+## Output Structure
 
-```text
-Use $wisdom-council to help me decide:
-I may quit my job within 3 months to start a company.
-I currently have stable income and family responsibility.
-I am afraid of running out of cash if I fail, but I am also afraid of missing the window if I wait too long.
-Please prioritize risk, long-term upside, and family responsibility.
-```
+The default output order is:
 
-### Good follow-up patterns
+1. Ten individual figure statements
+2. Roundtable debate
+3. Why these ten figures were selected
+4. Action plan
 
-After the first answer, you can continue with prompts like:
+## What Changed in This Version
 
-- Based on the last round, keep only the 3 most important voices and go deeper.
-- Based on the last round, focus on the conflict between stability and freedom.
-- Rebuild the council, but prioritize startup, risk, and organizational lenses this time.
-- Keep the same judgment, but rewrite the action plan in a more conservative / more aggressive way.
-
-### Best-fit problem types
-
-- relationships, marriage, family, parenting
-- career decisions, switching paths, startups, competition
-- anxiety, meaning, emptiness, procrastination
-- value conflicts, principle choices, boundary questions
-- failure, rebuilding, mortality, and limited time
-
-## Workflow
-
-```text
-User Question
-  -> Router
-  -> Retriever
-  -> Council Builder
-  -> Renderer
-  -> Synthesizer
-  -> Quality Checker
-  -> Final Decision
-```
-
-In plain language:
-
-```text
-user problem
-  -> analyze decision structure
-  -> select the right wisdom lenses
-  -> build a ten-seat council
-  -> generate competing viewpoints
-  -> synthesize a judgment
-  -> return an action plan
-```
-
-## What the System Does
-
-- identifies the domain, conflict type, emotional state, hidden motive, and true blockage
-- dynamically selects the best ten wisdom lenses from the pool
-- creates real disagreement instead of superficial variety
-- converges on judgment, tradeoffs, and actions
-
-## What the User Gets
-
-Every response includes:
-
-- a restatement of the problem
-- why these ten lenses were selected
-- ten distinct perspectives
-- major consensus
-- key disagreements
-- final judgment
-- 24-hour actions
-- 7-day plan
-- next-round deepening questions
-
-The goal is not to give more opinions.
-The goal is to help the user decide.
-
-## Example Output Shape
-
-User question:
-
-> Should I quit my job and start a company?
-
-A likely synthesis might look like this:
-
-- Major consensus: if demand is still unvalidated, quitting now is too risky.
-- Key disagreement: go all-in now vs validate through a side path first.
-- Final judgment: build proof through a side path before quitting.
-- 24-hour action: contact three potential customers to validate demand.
-- 7-day plan: finish the first interview round and a rough prototype.
-
-## Why This Skill Exists
-
-Most “wise advisor” prompts fail in predictable ways:
-
-- they reuse the same people every time,
-- they sound diverse without creating real disagreement,
-- they end in encouragement instead of a decision.
-
-This skill is designed to do the opposite:
-
-make wisdom collide, then turn that collision into action.
+- figures are no longer treated as abstract lens labels
+- each figure now has its own `persona_instruction`
+- each figure must speak independently first
+- debate is mandatory, not optional decoration
+- the ending is a single action-plan synthesis instead of multiple summary blocks
 
 ## File Structure
 
 - [`SKILL.md`](./SKILL.md): skill workflow and operating rules
-- [`references/sages.json`](./references/sages.json): structured sage pool
-- [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, and routing rules
+- [`references/sages.json`](./references/sages.json): structured sage pool plus persona prompts
+- [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, and rules
 - [`references/router_prompt.md`](./references/router_prompt.md): classification logic
-- [`references/renderer_prompt.md`](./references/renderer_prompt.md): rendering and synthesis logic
+- [`references/renderer_prompt.md`](./references/renderer_prompt.md): persona rendering, debate, and synthesis logic
 - [`references/eval_cases.json`](./references/eval_cases.json): test cases
 
 ## Boundaries
@@ -164,7 +83,3 @@ The system does not:
 - reframe obvious harm as relationship repair,
 - treat legal, medical, tax, or investment questions as purely wisdom questions,
 - end with abstract encouragement.
-
-## One-Line Summary
-
-Turn a human dilemma into a real clash of ideas, then converge on a decision you can act on.
