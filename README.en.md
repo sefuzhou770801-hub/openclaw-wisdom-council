@@ -4,110 +4,166 @@
 
 # Wisdom Council
 
-Dynamic historical-wisdom routing for real user dilemmas.
+A historical-wisdom decision system for real human dilemmas.
 
-`Wisdom Council` is not a “ten ancient people take turns talking” prompt.
-It is a routing system that:
+Many hard problems are not blocked by missing information.
+They are blocked by missing judgment.
 
-1. classifies the user's dilemma,
-2. selects the best-fit 10 wisdom lenses from a structured sage pool,
-3. forces disagreement and counterbalance,
-4. converges on a judgment, tradeoffs, and concrete actions.
+- Should I get divorced?
+- Should I quit my job and start a company?
+- My cofounder is becoming unreliable.
+- I know what I should do, but I keep procrastinating.
+- I care too much about what other people think.
 
-## What It Does
+These questions rarely have a clean “correct” answer, but they still require a decision.
 
-- Turns messy user questions into a structured decision frame.
-- Routes by domain, conflict type, blocked point, urgency, and decision scene.
-- Builds a balanced 10-person council instead of reusing the same famous names.
-- Prevents one-sided outputs like pure self-help, pure ethics, or pure strategy.
-- Forces a final answer with `24-hour actions` and `7-day actions`.
+`Wisdom Council` is built for one thing:
 
-## Why It Exists
+turn a human dilemma into a real clash of ideas, then converge on a decision you can act on.
 
-Most “wise advisor” prompts fail in the same way:
+This is not roleplay.
+It is a decision-support thinking system.
 
-- they always use the same people,
-- they confuse topic with true blockage,
-- they flatten disagreement into generic inspiration,
-- they end with vague comfort instead of a judgment.
+## How to Use This Skill
 
-This skill is designed to do the opposite.
+The simplest way is to explicitly invoke `$wisdom-council` inside a skill-enabled agent, then describe your real dilemma as plainly as possible.
 
-## Core Workflow
+### Minimal usage
+
+```text
+Use $wisdom-council to help me decide whether I should quit my job and start a company.
+```
+
+### Better prompt shape
+
+The system works much better when you include a little context. Try adding:
+
+- your current situation
+- the real options in front of you
+- what you are most afraid of losing
+- what outcome you cannot accept
+- the time window for the decision
+
+Example:
+
+```text
+Use $wisdom-council to help me decide:
+I may quit my job within 3 months to start a company.
+I currently have stable income and family responsibility.
+I am afraid of running out of cash if I fail, but I am also afraid of missing the window if I wait too long.
+Please prioritize risk, long-term upside, and family responsibility.
+```
+
+### Good follow-up patterns
+
+After the first answer, you can continue with prompts like:
+
+- Based on the last round, keep only the 3 most important voices and go deeper.
+- Based on the last round, focus on the conflict between stability and freedom.
+- Rebuild the council, but prioritize startup, risk, and organizational lenses this time.
+- Keep the same judgment, but rewrite the action plan in a more conservative / more aggressive way.
+
+### Best-fit problem types
+
+- relationships, marriage, family, parenting
+- career decisions, switching paths, startups, competition
+- anxiety, meaning, emptiness, procrastination
+- value conflicts, principle choices, boundary questions
+- failure, rebuilding, mortality, and limited time
+
+## Workflow
 
 ```text
 User Question
   -> Router
   -> Retriever
   -> Council Builder
-  -> Renderer + Synthesizer
+  -> Renderer
+  -> Synthesizer
   -> Quality Checker
+  -> Final Decision
 ```
 
-## Key Features
+In plain language:
 
-- `Dynamic classification`
-  Detects primary domain, secondary domains, conflict types, emotional tone, hidden intent, and blocked point.
+```text
+user problem
+  -> analyze decision structure
+  -> select the right wisdom lenses
+  -> build a ten-seat council
+  -> generate competing viewpoints
+  -> synthesize a judgment
+  -> return an action plan
+```
 
-- `Dynamic sage selection`
-  Chooses the best-fit 10 sages from a structured pool of 32, instead of relying on a fixed roster.
+## What the System Does
 
-- `Balanced council construction`
-  Uses seat functions like anchor, coverage, counterbalance, action, context, and wildcard.
+- identifies the domain, conflict type, emotional state, hidden motive, and true blockage
+- dynamically selects the best ten wisdom lenses from the pool
+- creates real disagreement instead of superficial variety
+- converges on judgment, tradeoffs, and actions
 
-- `Anti-bias constraints`
-  Prevents overuse of famous figures, repeated lens clusters, civilizational imbalance, and false consensus.
+## What the User Gets
 
-- `Action-first synthesis`
-  Produces a judgment, names the cost, and ends with near-term actions.
+Every response includes:
 
-## File Map
+- a restatement of the problem
+- why these ten lenses were selected
+- ten distinct perspectives
+- major consensus
+- key disagreements
+- final judgment
+- 24-hour actions
+- 7-day plan
+- next-round deepening questions
 
-- [`SKILL.md`](./SKILL.md): top-level skill workflow and operating rules
+The goal is not to give more opinions.
+The goal is to help the user decide.
+
+## Example Output Shape
+
+User question:
+
+> Should I quit my job and start a company?
+
+A likely synthesis might look like this:
+
+- Major consensus: if demand is still unvalidated, quitting now is too risky.
+- Key disagreement: go all-in now vs validate through a side path first.
+- Final judgment: build proof through a side path before quitting.
+- 24-hour action: contact three potential customers to validate demand.
+- 7-day plan: finish the first interview round and a rough prototype.
+
+## Why This Skill Exists
+
+Most “wise advisor” prompts fail in predictable ways:
+
+- they reuse the same people every time,
+- they sound diverse without creating real disagreement,
+- they end in encouragement instead of a decision.
+
+This skill is designed to do the opposite:
+
+make wisdom collide, then turn that collision into action.
+
+## File Structure
+
+- [`SKILL.md`](./SKILL.md): skill workflow and operating rules
 - [`references/sages.json`](./references/sages.json): structured sage pool
-- [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, blocked points, seat functions, hard rules
-- [`references/router_prompt.md`](./references/router_prompt.md): classification and selection logic
-- [`references/renderer_prompt.md`](./references/renderer_prompt.md): output and convergence rules
-- [`references/eval_cases.json`](./references/eval_cases.json): routing sanity checks with 12 test cases
+- [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, and routing rules
+- [`references/router_prompt.md`](./references/router_prompt.md): classification logic
+- [`references/renderer_prompt.md`](./references/renderer_prompt.md): rendering and synthesis logic
+- [`references/eval_cases.json`](./references/eval_cases.json): test cases
 
-## Typical Use Cases
+## Boundaries
 
-- Should I get divorced?
-- Should I quit and start a company?
-- I feel anxious and life feels meaningless.
-- My cofounder is unreliable. Do I confront or cut?
-- I know what to do but keep procrastinating.
-- I care too much about what people think.
-- My parents keep interfering with my life.
-- I want to win without becoming hollow or cynical.
+The system does not:
 
-## Output Contract
+- fabricate historical quotes,
+- reframe obvious harm as relationship repair,
+- treat legal, medical, tax, or investment questions as purely wisdom questions,
+- end with abstract encouragement.
 
-Every good response should contain:
+## One-Line Summary
 
-1. Problem restatement
-2. Why these 10 sages were selected
-3. Ten distinct viewpoints
-4. Major consensus
-5. Key disagreements
-6. Final judgment
-7. 24-hour actions
-8. 7-day actions
-9. Next-round deepening path
-
-## Guardrails
-
-- Do not fabricate historical quotes.
-- Do not confuse abuse or structural harm with “repair the relationship.”
-- Do not answer high-stakes legal, medical, tax, or investment questions as if wisdom replaces professional verification.
-- Do not end in abstract encouragement.
-
-## Positioning
-
-This skill is best understood as:
-
-`user problem -> structured dilemma -> dynamic lens routing -> actionable judgment`
-
-Not:
-
-`pick ten famous thinkers -> generate inspirational monologues`
+Turn a human dilemma into a real clash of ideas, then converge on a decision you can act on.
