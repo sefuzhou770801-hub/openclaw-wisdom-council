@@ -4,7 +4,7 @@
 
 # Wisdom Council
 
-A historical-wisdom decision system for real human dilemmas.
+An OpenClaw skill for historical-wisdom decision support.
 
 Many hard problems are not blocked by missing information.
 They are blocked by missing judgment.
@@ -24,19 +24,20 @@ turn a human dilemma into a real clash of ideas, then converge on a decision you
 This is not roleplay.
 It is a decision-support thinking system.
 
-## How to Use This Skill
+## How to Use This Skill in OpenClaw
 
-The simplest way is to explicitly invoke `$wisdom-council` inside a skill-enabled agent, then describe your real dilemma as plainly as possible.
+This repository is built as an OpenClaw skill. The simplest way to use it is to explicitly invoke `$wisdom-council` inside an OpenClaw conversation, then describe your dilemma as plainly as possible.
 
 ### Minimal usage
 
 ```text
+In OpenClaw, say:
 Use $wisdom-council to help me decide whether I should quit my job and start a company.
 ```
 
 ### Better prompt shape
 
-The system works much better when you include a little context. Try adding:
+Inside OpenClaw, the system works much better when you include a little context. Try adding:
 
 - your current situation
 - the real options in front of you
