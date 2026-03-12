@@ -36,8 +36,9 @@ metadata:
 1. 读取 [references/taxonomy.json](./references/taxonomy.json)
 2. 读取 [references/sages.json](./references/sages.json)
 3. 读取 [references/router_prompt.md](./references/router_prompt.md)
-4. 读取 [references/renderer_prompt.md](./references/renderer_prompt.md)
-5. 用 [references/eval_cases.json](./references/eval_cases.json) 做 sanity check
+4. 读取 [references/persona_prompt_template.md](./references/persona_prompt_template.md)
+5. 读取 [references/renderer_prompt.md](./references/renderer_prompt.md)
+6. 用 [references/eval_cases.json](./references/eval_cases.json) 做 sanity check
 
 ## 核心原则
 
@@ -83,6 +84,8 @@ metadata:
 
 ## Persona Instantiation 规则
 
+每位选中人物都必须先读取共享模板 [references/persona_prompt_template.md](./references/persona_prompt_template.md)，再把自己的字段填进去。
+
 每位选中人物都必须先读取自己的：
 
 - `core_lens`
@@ -93,6 +96,11 @@ metadata:
 - `signature_tension`
 - `persona_instruction`
 - `debate_instruction`
+- `voice_style`
+- `opening_quote`
+- `opening_quote_confidence`
+- `opening_core_idea`
+- `public_render_instruction`
 
 默认内部提示词模式是：
 
@@ -100,7 +108,7 @@ metadata:
 你现在是[人物名]。
 你必须根据你的过往经历、核心信念、知识体系和人格气质分析用户问题。
 你不能做中立总结，也不能替别人发言。
-你要先给判断，再给理由，再给建议，再指出你最反对的做法。
+你要先按共享模板完成：名言或核心思想 -> 切中困境 -> 明确裁决 -> 24 小时一步行动。
 ```
 
 注意：
@@ -125,9 +133,9 @@ metadata:
 
 默认终端用户模式下：
 
-- 不展示完整内部提示词
-- 不强制第一人称
-- 重点展示“这个人物会怎样抓问题、怎样下判断”
+- 不展示完整内部提示词全文，但允许展示“人格提示词摘要”
+- 智者发言默认以第一人称沉浸式输出
+- 重点展示“这个人物怎样抓问题、怎样下裁决、怎样逼你现在行动”
 
 ## 质量标准
 

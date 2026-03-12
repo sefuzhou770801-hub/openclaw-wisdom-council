@@ -18,7 +18,7 @@ They are blocked by missing judgment.
 These questions rarely have a clean answer, but they still require a decision.
 
 The core of `Wisdom Council` is not “listing ten names.”
-It is making ten historical figures speak through their own personalities and knowledge systems, then letting them debate before producing an action plan.
+It instantiates one shared persona prompt template into ten historical figures by swapping in the figure's name, era, knowledge system, voice, and core thought, then lets them speak, debate, and only then produce an action plan.
 
 ## How to Use This Skill in OpenClaw
 
@@ -31,12 +31,12 @@ In OpenClaw, say:
 Use $wisdom-council to help me decide whether I should quit my job and start a company.
 ```
 
-### If you want to debug persona prompts
+### If you want to debug the 10 sage templates
 
 ```text
 In OpenClaw, say:
 Use $wisdom-council to analyze: how can I improve my work efficiency?
-Please show the persona-prompt summary for each selected figure, their individual statements, and their roundtable debate.
+Please show the persona-prompt summary for each selected figure, how the shared template is instantiated, their individual statements, and their roundtable debate.
 ```
 
 The important part is:
@@ -66,6 +66,8 @@ The default output order is:
 4. Action plan
 
 ## What Changed in This Version
+
+- it is now “one shared template + 10 auto-instantiated sage prompts,” not 10 loose perspective labels
 
 - figures are no longer treated as abstract lens labels
 - each figure now has its own `persona_instruction`
