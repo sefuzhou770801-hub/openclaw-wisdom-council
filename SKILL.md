@@ -1,6 +1,6 @@
 ---
 name: wisdom-council
-description: 把用户问题先结构化判题，再从历史智慧人物池中动态选出最贴题的 10 位人物，为每位人物实例化人格化提示词，让他们以各自的经历、信念和知识体系发言并展开圆桌辩论，最后总结成行动方案。用于 OpenClaw 中需要处理人生、关系、职业、创业、焦虑、拖延、价值冲突、失败、死亡等复杂问题时，尤其适合“先判题，再选人，再辩论，再总结”的多视角决策支持。
+description: 先把用户问题结构化判题，再从 100 位用户自写的历史智者专属提示词中动态选出最贴题的 10 位，逐个注入用户困境并让他们各自发言、展开圆桌辩论，最后收敛成行动方案。适用于 OpenClaw 中处理人生、关系、职业、创业、焦虑、拖延、价值冲突、失败、学习方法等复杂问题，尤其适合“先判题，再选人，再调用原 prompt，再辩论，再总结”的多视角决策支持。
 metadata:
   openclaw:
     emoji: "🧠"
@@ -10,23 +10,29 @@ metadata:
 
 # Wisdom Council
 
-这不是“列出十个名字”的系统，而是一个人格化的历史智慧议会。
+这不是“列出十个名字”的系统，而是一个调用 100 位专属 persona prompt 的历史智慧议会。
 
-核心不是谁入选，而是：
+这里最重要的约束只有一条：
 
-- 每位人物都要以自己的主人格发言
-- 每位人物都要按自己的知识体系分析问题
-- 人物之间必须发生真正的分歧和碰撞
-- 总结必须发生在他们发言之后，而不是之前
+- 100 位智者的 prompt 正文是人格源，不要重写，不要改写，不要再用共享模板覆盖它们
+
+系统要做的是：
+
+- 先判题
+- 再从 100 位人物里选人
+- 再把用户问题注入对应人物的原 prompt
+- 再让他们发言与辩论
+- 最后才做总结与行动方案
 
 ## 核心链路
 
 ```text
 用户问题
   -> Router：判题
-  -> Retriever：取候选
+  -> Prompt Search：从 100 位专属 prompt 里检索候选
   -> Council Builder：组 10 人议会
-  -> Persona Instantiation：为每位人物生成人格提示词
+  -> Prompt Hydration：把 {{USER_DILEMMA}} 注入入选人物原 prompt
+  -> Solo Statements：10 位人物逐个发言
   -> Debate：让人物彼此质疑和辩论
   -> Synthesizer：最后总结成行动方案
 ```
@@ -34,20 +40,29 @@ metadata:
 ## 读取顺序
 
 1. 读取 [references/taxonomy.json](./references/taxonomy.json)
-2. 读取 [references/sages.json](./references/sages.json)
-3. 读取 [references/router_prompt.md](./references/router_prompt.md)
-4. 读取 [references/persona_prompt_template.md](./references/persona_prompt_template.md)
+2. 读取 [references/persona_prompt_index.json](./references/persona_prompt_index.json)
+3. 必要时读取 [references/persona_prompt_library_100.md](./references/persona_prompt_library_100.md)
+4. 读取 [references/router_prompt.md](./references/router_prompt.md)
 5. 读取 [references/renderer_prompt.md](./references/renderer_prompt.md)
 6. 用 [references/eval_cases.json](./references/eval_cases.json) 做 sanity check
+7. 只有在入选人物不在 100 人 prompt 库时，才回退读取 [references/sages.json](./references/sages.json) 和 [references/persona_prompt_template.md](./references/persona_prompt_template.md)
 
-## 核心原则
+## Prompt Source Of Truth
 
-1. 选中的不是名字，而是“人格化分析器”。
-2. 每位人物都必须先按 `persona_instruction` 独立发言。
-3. 发言顺序要在前，总结顺序要在后。
-4. 圆桌辩论是必选环节，不是装饰环节。
-5. 内部按人物人格推理，外部用现代中文翻译，不做生硬 cosplay。
-6. 不伪造历史原话，但必须保留人物辨识度。
+对这 100 位人物：
+
+- 人格源文件是 [references/persona_prompt_library_100.md](./references/persona_prompt_library_100.md)
+- 检索索引是 [references/persona_prompt_index.json](./references/persona_prompt_index.json)
+- 检索与提取工具是 [scripts/persona_prompt_library.py](./scripts/persona_prompt_library.py)
+
+硬规则：
+
+1. 不要修改 `persona_prompt_library_100.md` 里的 prompt 正文。
+2. 不要把这些 prompt 再压缩回一份共享模板。
+3. 对入选人物，只允许做两件事：
+   - 选择它
+   - 用用户困境替换 `{{USER_DILEMMA}}`
+4. 若用户要求调试，允许展示“某位人物被注入后的 prompt”，但默认不要把整段内部 prompt 全部外显。
 
 ## Router 规则
 
@@ -71,6 +86,17 @@ metadata:
 
 优先按“当前最痛、最急、最卡”的层面定主分野。
 
+然后把用户原话和判题结果压成一个检索串，去 100 人索引里找 top 12 到 15 位候选。
+
+可直接调用：
+
+```bash
+python3 scripts/persona_prompt_library.py search \
+  --index references/persona_prompt_index.json \
+  --query "<用户原话 + 主分野 + 副分野 + 冲突 + 卡点>" \
+  --top 15
+```
+
 ## Council Builder 规则
 
 先取 top 12 到 15 位候选，再按 6 类席位组出 10 人：
@@ -82,60 +108,48 @@ metadata:
 - `情境席` 1 人：按外部博弈或存在性痛苦补位
 - `野牌席` 1 人：优先给更贴题但不那么热门的人
 
-## Persona Instantiation 规则
+只要 100 人 prompt 库里有该人物，就优先使用那里的 prompt，不要再从别处拼人格。
 
-每位选中人物都必须先读取共享模板 [references/persona_prompt_template.md](./references/persona_prompt_template.md)，再把自己的字段填进去。
+## Prompt Hydration 规则
 
-每位选中人物都必须先读取自己的：
+选出 10 位以后，必须提取他们的原 prompt，并把用户问题注入 `{{USER_DILEMMA}}`。
 
-- `core_lens`
-- `asks_first`
-- `strong_for`
-- `weak_for`
-- `risks_if_overused`
-- `signature_tension`
-- `persona_instruction`
-- `debate_instruction`
-- `voice_style`
-- `opening_quote`
-- `opening_quote_confidence`
-- `opening_core_idea`
-- `public_render_instruction`
+可直接调用：
 
-默认内部提示词模式是：
-
-```text
-你现在是[人物名]。
-你必须根据你的过往经历、核心信念、知识体系和人格气质分析用户问题。
-你不能做中立总结，也不能替别人发言。
-你要先按共享模板完成：名言或核心思想 -> 切中困境 -> 明确裁决 -> 24 小时一步行动。
+```bash
+python3 scripts/persona_prompt_library.py extract \
+  --source references/persona_prompt_library_100.md \
+  --names "孔子,王阳明,庄子" \
+  --user-dilemma "<用户原话>"
 ```
 
-注意：
+如果用户只写简称，例如“费曼”，脚本会自动尽量解析到唯一全名。
 
-- 这段是内部推理提示词，不是最终展示文案
-- 最终展示给用户时，要翻译成清楚自然的现代中文
-- 不要让 10 位人物都用同一套“我先判断 / 我最反对”模板出声
+## 发言与辩论规则
 
-## 输出顺序
+1. `十位人物发言` 必须在前。
+2. 每位人物的单独发言，都来自该人物自己的原 prompt。
+3. `圆桌辩论` 必须在后，且至少 3 轮明确冲突。
+4. `行动方案` 必须在最后，来自前面人物发言和辩论的提炼。
+5. 不要在发言前先把答案总结掉。
 
-输出给用户时，默认按这个顺序：
+## 共享模板的地位
 
-1. `十位人物发言`
+[references/persona_prompt_template.md](./references/persona_prompt_template.md) 不是这 100 位人物的默认人格源。
+
+它现在只用于：
+
+- 未来新增人物但还没有专属 prompt 时的 fallback
+- 内部实验或扩充人物池时的临时模板
+
+不要拿它覆盖用户已经写好的 100 条专属 prompt。
+
+## 默认输出顺序
+
+1. `十位智者发言`
 2. `圆桌辩论`
 3. `为什么是这十位`
 4. `行动方案`
-
-如果用户在做 skill 调试或 prompt 设计，允许额外展示：
-
-- `每位人物的人格提示词摘要`
-- `该人物为什么会这样发言`
-
-默认终端用户模式下：
-
-- 不展示完整内部提示词全文，但允许展示“人格提示词摘要”
-- 智者发言默认以第一人称沉浸式输出
-- 重点展示“这个人物怎样抓问题、怎样下裁决、怎样逼你现在行动”
 
 ## 质量标准
 
@@ -146,14 +160,8 @@ metadata:
 - 一个建议
 - 一个最反对的做法
 
-辩论阶段至少要出现 3 组明确冲突，而不是统一赞同。
 如果 10 段发言去掉名字以后仍然像同一个人写的，视为失败。
-
-最后的 `行动方案`：
-
-- 来自前面人物发言和辩论的提炼
-- 不要再重复“最终裁决”“主要共识”“关键分歧”这些标题
-- 只保留能执行的总结
+如果某位人物明明在 100 人 prompt 库里，却仍然被共享模板重写，视为失败。
 
 ## 风险处理
 

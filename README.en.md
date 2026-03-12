@@ -6,7 +6,7 @@
 
 An OpenClaw skill for historical-wisdom decision support.
 
-Many hard problems are not blocked by missing information.
+Many difficult problems are not blocked by missing information.
 They are blocked by missing judgment.
 
 - Should I get divorced?
@@ -17,8 +17,14 @@ They are blocked by missing judgment.
 
 These questions rarely have a clean answer, but they still require a decision.
 
-The core of `Wisdom Council` is not “listing ten names.”
-It instantiates one shared persona prompt template into ten historical figures by swapping in the figure's name, era, knowledge system, voice, and core thought, then lets them speak, debate, and only then produce an action plan.
+The core of `Wisdom Council` is no longer “one shared template for ten names.”
+Its main engine is now:
+
+- a 100-person library of user-authored persona prompts
+- a routing layer that classifies the problem first
+- a retrieval layer that selects the best 10 figures from those 100
+- an injection layer that fills each figure's original prompt with the user's dilemma
+- a debate and synthesis layer that lets them speak, clash, and only then converge into an action plan
 
 ## How to Use This Skill in OpenClaw
 
@@ -31,20 +37,20 @@ In OpenClaw, say:
 Use $wisdom-council to help me decide whether I should quit my job and start a company.
 ```
 
-### If you want to debug the 10 sage templates
+### If you want to debug the 100-prompt library
 
 ```text
 In OpenClaw, say:
-Use $wisdom-council to analyze: how can I improve my work efficiency?
-Please show the persona-prompt summary for each selected figure, how the shared template is instantiated, their individual statements, and their roundtable debate.
+Use $wisdom-council to analyze: how should I learn English?
+Please show which figures were selected, the original prompt summary for each one, how my dilemma was injected, and their roundtable debate.
 ```
 
-The important part is:
+What matters here is:
 
-- the internal reasoning should truly follow each figure's persona prompt
-- the final wording should not dump that prompt back at the user
-- what the user sees should be clear modern language that still carries that figure's distinct judgment style
-- if the result feels obscure or templated, the rendering has failed and should be rewritten
+- the system should call the original persona prompts you wrote, not regenerate them from a shared template
+- normal mode should not dump the full internal prompts back to the user
+- the visible output should stay readable while preserving each figure's judgment style
+- if the result still feels templated, the routing or rendering has failed and should be rewritten
 
 ### Better prompt shape
 
@@ -67,22 +73,20 @@ The default output order is:
 
 ## What Changed in This Version
 
-- it is now “one shared template + 10 auto-instantiated sage prompts,” not 10 loose perspective labels
-
-- figures are no longer treated as abstract lens labels
-- each figure now has its own `persona_instruction`
-- each figure must speak independently first
-- debate is mandatory, not optional decoration
-- the ending is a single action-plan synthesis instead of multiple summary blocks
-- internal persona reasoning is separated from external user-facing rendering
-- distinctiveness should come from priorities and judgment style, not from obscure wording
+- it is now “a 100-prompt persona library + dynamic routing + original prompt injection,” not “one shared template + ten renamed instances”
+- the source of each figure's persona is the original prompt body
+- the router is responsible for classification and selection, not persona rewriting
+- debate and synthesis happen after the individual statements
+- the shared template remains only as a fallback for figures not yet covered by the 100-prompt library
 
 ## File Structure
 
 - [`SKILL.md`](./SKILL.md): skill workflow and operating rules
-- [`references/sages.json`](./references/sages.json): structured sage pool plus persona prompts
+- [`references/persona_prompt_library_100.md`](./references/persona_prompt_library_100.md): the original 100-person prompt library
+- [`references/persona_prompt_index.json`](./references/persona_prompt_index.json): search index for the prompt library
+- [`scripts/persona_prompt_library.py`](./scripts/persona_prompt_library.py): lookup and extraction tooling for the original prompts
 - [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, and rules
-- [`references/router_prompt.md`](./references/router_prompt.md): classification logic
+- [`references/router_prompt.md`](./references/router_prompt.md): classification and selection logic
 - [`references/renderer_prompt.md`](./references/renderer_prompt.md): persona rendering, debate, and synthesis logic
 - [`references/eval_cases.json`](./references/eval_cases.json): test cases
 
@@ -93,4 +97,5 @@ The system does not:
 - fabricate historical quotes,
 - reframe obvious harm as relationship repair,
 - treat legal, medical, tax, or investment questions as purely wisdom questions,
+- silently overwrite existing persona prompts with a shared template,
 - end with abstract encouragement.
