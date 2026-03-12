@@ -39,6 +39,13 @@ Use $wisdom-council to analyze: how can I improve my work efficiency?
 Please show the persona-prompt summary for each selected figure, their individual statements, and their roundtable debate.
 ```
 
+The important part is:
+
+- the internal reasoning should truly follow each figure's persona prompt
+- the final wording should not dump that prompt back at the user
+- what the user sees should be clear modern language that still carries that figure's distinct judgment style
+- if the result feels obscure or templated, the rendering has failed and should be rewritten
+
 ### Better prompt shape
 
 Inside OpenClaw, the system works much better when you include:
@@ -65,6 +72,8 @@ The default output order is:
 - each figure must speak independently first
 - debate is mandatory, not optional decoration
 - the ending is a single action-plan synthesis instead of multiple summary blocks
+- internal persona reasoning is separated from external user-facing rendering
+- distinctiveness should come from priorities and judgment style, not from obscure wording
 
 ## File Structure
 
