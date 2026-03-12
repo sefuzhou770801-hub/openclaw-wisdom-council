@@ -24,7 +24,7 @@ Its main engine is now:
 - a routing layer that classifies the problem first
 - a retrieval layer that selects the best 10 figures from those 100
 - an injection layer that fills each figure's original prompt with the user's dilemma
-- a debate and synthesis layer that lets them speak, clash, and only then converge into an action plan
+- a synthesis layer that lets them speak in sequence and then converge into an action plan
 
 ## How to Use This Skill in OpenClaw
 
@@ -42,7 +42,7 @@ Use $wisdom-council to help me decide whether I should quit my job and start a c
 ```text
 In OpenClaw, say:
 Use $wisdom-council to analyze: how should I learn English?
-Please show which figures were selected, the original prompt summary for each one, how my dilemma was injected, and their roundtable debate.
+Please show which figures were selected, the original prompt summary for each one, and how my dilemma was injected.
 ```
 
 What matters here is:
@@ -67,16 +67,14 @@ Inside OpenClaw, the system works much better when you include:
 The default output order is:
 
 1. Ten individual figure statements
-2. Roundtable debate
-3. Why these ten figures were selected
-4. Action plan
+2. A synthesized conclusion and action plan
 
 ## What Changed in This Version
 
 - it is now “a 100-prompt persona library + dynamic routing + original prompt injection,” not “one shared template + ten renamed instances”
 - the source of each figure's persona is the original prompt body
 - the router is responsible for classification and selection, not persona rewriting
-- debate and synthesis happen after the individual statements
+- the default output now emphasizes complementarity instead of forcing disagreements between figures
 - the shared template remains only as a fallback for figures not yet covered by the 100-prompt library
 
 ## File Structure
@@ -87,7 +85,7 @@ The default output order is:
 - [`scripts/persona_prompt_library.py`](./scripts/persona_prompt_library.py): lookup and extraction tooling for the original prompts
 - [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, and rules
 - [`references/router_prompt.md`](./references/router_prompt.md): classification and selection logic
-- [`references/renderer_prompt.md`](./references/renderer_prompt.md): persona rendering, debate, and synthesis logic
+- [`references/renderer_prompt.md`](./references/renderer_prompt.md): persona rendering and synthesis logic
 - [`references/eval_cases.json`](./references/eval_cases.json): test cases
 
 ## Boundaries

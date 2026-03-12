@@ -1,6 +1,6 @@
 ---
 name: wisdom-council
-description: 先把用户问题结构化判题，再从 100 位用户自写的历史智者专属提示词中动态选出最贴题的 10 位，逐个注入用户困境并让他们各自发言、展开交锋，最后收束成自然结论与可执行方案。适用于 OpenClaw 中处理人生、关系、职业、创业、焦虑、拖延、价值冲突、失败、学习方法等复杂问题，尤其适合“先判题，再选人，再调用原 prompt，再交锋，再收束”的多视角决策支持。
+description: 先把用户问题结构化判题，再从 100 位用户自写的历史智者专属提示词中动态选出最贴题的 10 位，逐个注入用户困境并让他们各自发言，最后收束成自然结论与可执行方案。适用于 OpenClaw 中处理人生、关系、职业、创业、焦虑、拖延、价值冲突、失败、学习方法等复杂问题，尤其适合“先判题，再选人，再调用原 prompt，再顺序分析，再收束”的多视角决策支持。
 metadata:
   openclaw:
     emoji: "🧠"
@@ -21,7 +21,7 @@ metadata:
 - 先判题
 - 再从 100 位人物里选人
 - 再把用户问题注入对应人物的原 prompt
-- 再让他们发言与交锋
+- 再让他们顺序发言
 - 最后才做自然收束与执行方案
 
 ## 核心链路
@@ -33,7 +33,6 @@ metadata:
   -> Council Builder：组 10 人议会
   -> Prompt Hydration：把 {{USER_DILEMMA}} 注入入选人物原 prompt
   -> Solo Statements：10 位人物逐个发言
-  -> Debate：让人物彼此质疑和辩论
   -> Synthesizer：最后收束成自然结论与执行方案
 ```
 
@@ -91,10 +90,7 @@ metadata:
 可直接调用：
 
 ```bash
-python3 scripts/persona_prompt_library.py search \
-  --index references/persona_prompt_index.json \
-  --query "<用户原话 + 主分野 + 副分野 + 冲突 + 卡点>" \
-  --top 15
+python3 scripts/persona_prompt_library.py search   --index references/persona_prompt_index.json   --query "<用户原话 + 主分野 + 副分野 + 冲突 + 卡点>"   --top 15
 ```
 
 ## Council Builder 规则
@@ -103,7 +99,7 @@ python3 scripts/persona_prompt_library.py search \
 
 - `锚定席` 2 人：定义问题本质
 - `补充席` 2 人：覆盖副分野与卡点
-- `对冲席` 2 人：防单边化
+- `互补席` 2 人：补不同盲点，避免单一口径
 - `行动席` 2 人：把判断转成动作
 - `情境席` 1 人：按外部博弈或存在性痛苦补位
 - `野牌席` 1 人：优先给更贴题但不那么热门的人
@@ -117,27 +113,24 @@ python3 scripts/persona_prompt_library.py search \
 可直接调用：
 
 ```bash
-python3 scripts/persona_prompt_library.py extract \
-  --source references/persona_prompt_library_100.md \
-  --names "孔子,王阳明,庄子" \
-  --user-dilemma "<用户原话>"
+python3 scripts/persona_prompt_library.py extract   --source references/persona_prompt_library_100.md   --names "孔子,王阳明,庄子"   --user-dilemma "<用户原话>"
 ```
 
 如果用户只写简称，例如“费曼”，脚本会自动尽量解析到唯一全名。
 
-## 发言与交锋规则
+## 发言与收束规则
 
 1. 10 位人物完整发言必须在前。
 2. 每位人物的单独发言，都来自该人物自己的原 prompt。
-3. 发言之后可以展示几组明确交锋，但不要写成小说式串场。
-4. 最后的综合结论，来自前面人物发言和交锋的提炼。
+3. 默认不要安排人物之间互相争论或互相点评。
+4. 最后的综合结论，来自前面人物发言的提炼。
 5. 不要在发言前先把答案总结掉。
 6. 默认不要在用户可见输出里打出 `圆桌辩论`、`为什么是这十位`、`行动方案` 这些标题。
 7. 每位人物名字下可以补一句极短人物简介，但不要写成 `个人简介：` 这种标签。
 8. 若人物没有把握使用真实原话，就直接写出其核心判断，不要显式写 `我的核心思想是`。
 9. 若人物要下结论，直接下结论，不要显式写 `我的裁决是`。
 10. 若人物要给立刻行动，不要写 `24小时之内`，改成自然说法，例如 `今天就...`、`现在先去...`。
-11. 若展示人物分歧，要直接写观点冲突本身，不要写 `说到这里，这桌人吵开了`、`谁冷冷坐在旁边` 这类戏剧化过场。
+11. 默认不要写人物分歧；若用户明确要求比较不同人物观点，才允许额外展示，但也不要写成戏剧化过场。
 
 ## 共享模板的地位
 
@@ -152,11 +145,10 @@ python3 scripts/persona_prompt_library.py extract \
 
 ## 默认用户可见结构
 
-默认用户可见结构只有三层：
+默认用户可见结构只有两层：
 
 1. 逐位智者发言
-2. 发言之后的自然交锋
-3. 最后一段综合结论与执行方案
+2. 最后一段综合结论与执行方案
 
 若用户明确要求调试，再额外展示选人依据或 prompt 摘要。
 

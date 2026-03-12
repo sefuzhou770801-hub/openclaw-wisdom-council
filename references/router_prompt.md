@@ -5,7 +5,7 @@
 
 1. 先把用户问题判题
 2. 再从 100 位专属 persona prompt 里检索候选
-3. 再组出 10 位平衡议会
+3. 再组出 10 位互补议会
 4. 再把用户问题注入对应原 prompt
 
 你拥有：
@@ -58,10 +58,7 @@
 优先调用：
 
 ```bash
-python3 scripts/persona_prompt_library.py search \
-  --index references/persona_prompt_index.json \
-  --query "<检索串>" \
-  --top 15
+python3 scripts/persona_prompt_library.py search   --index references/persona_prompt_index.json   --query "<检索串>"   --top 15
 ```
 
 拿到 top 12 到 15 位以后，再做人为筛选。
@@ -73,7 +70,7 @@ python3 scripts/persona_prompt_library.py search \
 
 - `anchor` 2 人：定义问题本质
 - `coverage` 2 人：覆盖副分野与卡点
-- `counterbalance` 2 人：防主流倾向过重
+- `complement` 2 人：补不同盲点，避免单一口径
 - `action` 2 人：把话翻译成行动
 - `context` 1 人：按外部博弈或存在性场景补位
 - `wildcard` 1 人：优先给贴题但不那么热门的人
@@ -93,10 +90,7 @@ python3 scripts/persona_prompt_library.py search \
 议会名单确定后，必须提取对应人物的原 prompt，并注入用户困境：
 
 ```bash
-python3 scripts/persona_prompt_library.py extract \
-  --source references/persona_prompt_library_100.md \
-  --names "<10位人物名字，用逗号分隔>" \
-  --user-dilemma "<用户原话>"
+python3 scripts/persona_prompt_library.py extract   --source references/persona_prompt_library_100.md   --names "<10位人物名字，用逗号分隔>"   --user-dilemma "<用户原话>"
 ```
 
 ## Step 7：会前自检
@@ -109,3 +103,4 @@ python3 scripts/persona_prompt_library.py extract \
 4. 不只有修身，没有行动
 5. 每位入选人物都已经拿到了自己的原 prompt
 6. 没有任何人物被共享模板覆盖掉原本专属 prompt
+7. 议会是互补关系，不以制造人物分歧为目标

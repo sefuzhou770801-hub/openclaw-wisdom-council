@@ -24,7 +24,7 @@
 - 一个路由层，先判断用户问题属于什么分野
 - 一个检索层，从 100 人里挑最贴题的 10 位
 - 一个注入层，把用户困境塞进这 10 位人物各自的原 prompt
-- 一个辩论与总结层，让他们先发言、再交锋、最后收敛成行动方案
+- 一个收束层，让他们顺序发言，最后合成一个方案
 
 ## 怎么在 OpenClaw 里使用
 
@@ -42,7 +42,7 @@
 ```text
 在 OpenClaw 里说：
 用 $wisdom-council 分析：我应该怎么学英语？
-请展示这次命中的人物、每个人对应的原 prompt 摘要、用户困境如何被注入，以及他们的圆桌辩论。
+请展示这次命中的人物、每个人对应的原 prompt 摘要，以及用户困境如何被注入。
 ```
 
 这里的关键是：
@@ -67,16 +67,14 @@
 默认输出顺序是：
 
 1. 十位人物发言
-2. 圆桌辩论
-3. 为什么是这十位
-4. 行动方案
+2. 综合结论与执行方案
 
 ## 这版 Skill 的关键变化
 
 - 现在是“100 位专属 prompt 库 + 动态路由 + 原 prompt 注入”，不是“1 个共享模板 + 10 个换名实例”
 - 人物人格的源头，是用户写好的 prompt 正文
 - 路由层只负责判题和选人，不负责重写人物
-- 辩论和总结发生在人物发言之后
+- 默认不再强调人物之间的分歧，而是强调互补
 - 共享模板只保留为 fallback，不再覆盖已有的专属 prompt
 
 ## 文件结构
@@ -87,7 +85,7 @@
 - [`scripts/persona_prompt_library.py`](./scripts/persona_prompt_library.py)：检索与提取原 prompt 的脚本
 - [`references/taxonomy.json`](./references/taxonomy.json)：领域、冲突类型与规则
 - [`references/router_prompt.md`](./references/router_prompt.md)：问题分类与选人逻辑
-- [`references/renderer_prompt.md`](./references/renderer_prompt.md)：人物发言、辩论与总结逻辑
+- [`references/renderer_prompt.md`](./references/renderer_prompt.md)：人物发言与收束逻辑
 - [`references/eval_cases.json`](./references/eval_cases.json)：测试案例
 
 ## 边界
