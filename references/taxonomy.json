@@ -1,0 +1,230 @@
+{
+  "domains": [
+    {
+      "id": "meaning-existence",
+      "name": "人生意义与存在",
+      "definition": "用户卡住的不是单个现实事项，而是活着为了什么、我是谁、为什么提不起劲。",
+      "common_user_phrasings": [
+        "我活着到底为了什么",
+        "为什么什么都提不起劲",
+        "我不知道人生的意义是什么"
+      ],
+      "keywords": ["意义", "空虚", "虚无", "价值", "我是谁", "为什么活"],
+      "preferred_lens_clusters": ["meaning_under_suffering", "detachment_freedom", "conceptual_clarity"],
+      "preferred_sage_names": ["维克多·弗兰克尔", "克尔凯郭尔", "释迦牟尼", "庄子", "苏格拉底"]
+    },
+    {
+      "id": "anxiety-pain-attachment",
+      "name": "焦虑、痛苦、情绪与执念",
+      "definition": "情绪已经主导判断，用户先需要去雾、降温、切开执念。",
+      "common_user_phrasings": [
+        "我停不下来地焦虑",
+        "我总在反刍",
+        "我控制不住自己的情绪"
+      ],
+      "keywords": ["焦虑", "痛苦", "失眠", "执念", "嫉妒", "愤怒", "反刍"],
+      "preferred_lens_clusters": ["suffering_detachment", "stoic_control", "detachment_freedom"],
+      "preferred_sage_names": ["释迦牟尼", "爱比克泰德", "塞涅卡", "斯宾诺莎", "庄子"]
+    },
+    {
+      "id": "relationships-family",
+      "name": "关系、婚姻、家庭、亲子",
+      "definition": "关系中的责任、边界、忠诚、伤害、照顾和退出判断。",
+      "common_user_phrasings": [
+        "我要不要离婚",
+        "父母控制我怎么办",
+        "我和伴侣总在同一个地方吵"
+      ],
+      "keywords": ["离婚", "伴侣", "孩子", "父母", "边界", "原谅", "责任", "孝顺"],
+      "preferred_lens_clusters": ["role_ethics", "love_truth", "freedom_reciprocity"],
+      "preferred_sage_names": ["孔子", "孟子", "耶稣", "西蒙娜·德·波伏娃", "亚里士多德"]
+    },
+    {
+      "id": "career-development",
+      "name": "职业选择与个人发展",
+      "definition": "路径选择、能力发展、人生轨道和成长代价。",
+      "common_user_phrasings": [
+        "该转行吗",
+        "稳定还是更大成长",
+        "我是不是走错路了"
+      ],
+      "keywords": ["辞职", "转行", "成长", "方向", "天赋", "前途", "平台"],
+      "preferred_lens_clusters": ["virtue_habit", "will_and_action", "conceptual_clarity"],
+      "preferred_sage_names": ["亚里士多德", "王阳明", "曾国藩", "苏格拉底"]
+    },
+    {
+      "id": "entrepreneurship-strategy",
+      "name": "创业、竞争、战略与博弈",
+      "definition": "多方博弈、资源有限、时机和胜率判断。",
+      "common_user_phrasings": [
+        "该不该创业",
+        "合伙人不靠谱怎么办",
+        "现在该进攻还是收缩"
+      ],
+      "keywords": ["创业", "市场", "竞争", "谈判", "合伙", "定位", "融资", "止损"],
+      "preferred_lens_clusters": ["strategic_realism", "power_realism", "will_and_action"],
+      "preferred_sage_names": ["孙子", "韩非子", "马基雅维利", "王阳明", "稻盛和夫"]
+    },
+    {
+      "id": "management-leadership-power",
+      "name": "组织管理、领导、权力与责任",
+      "definition": "带人、设结构、奖惩、信任、文化与责任归位。",
+      "common_user_phrasings": [
+        "员工不服怎么办",
+        "该不该强硬",
+        "团队开始失控了"
+      ],
+      "keywords": ["团队", "管理", "领导", "激励", "奖惩", "信任", "责任", "文化"],
+      "preferred_lens_clusters": ["institutional_training", "judgment_responsibility", "strategic_realism"],
+      "preferred_sage_names": ["荀子", "韩非子", "孔子", "汉娜·阿伦特", "伊本·赫勒敦"]
+    },
+    {
+      "id": "moral-value-conflict",
+      "name": "道德困境、价值冲突、原则选择",
+      "definition": "不是简单对错，而是两种好或两种坏在冲突。",
+      "common_user_phrasings": [
+        "为了结果能不能撒谎",
+        "忠诚和诚实冲突怎么办",
+        "我是不是在背叛自己"
+      ],
+      "keywords": ["原则", "道德", "忠诚", "公平", "底线", "牺牲", "两难"],
+      "preferred_lens_clusters": ["universal_principle", "judgment_responsibility", "role_ethics"],
+      "preferred_sage_names": ["康德", "汉娜·阿伦特", "孔子", "耶稣"]
+    },
+    {
+      "id": "learning-discipline-habits",
+      "name": "学习、修身、自律、习惯养成",
+      "definition": "长期训练、专注、节律、积累和执行系统。",
+      "common_user_phrasings": [
+        "怎么才能坚持",
+        "怎么建立习惯",
+        "我总是三分钟热度"
+      ],
+      "keywords": ["自律", "习惯", "专注", "学习", "训练", "执行", "节律"],
+      "preferred_lens_clusters": ["will_and_action", "virtue_habit", "institutional_training"],
+      "preferred_sage_names": ["王阳明", "曾国藩", "荀子", "亚里士多德", "稻盛和夫"]
+    },
+    {
+      "id": "failure-rebuild",
+      "name": "失败、挫折、低谷与重建",
+      "definition": "不是一时失利，而是自我感瓦解后的重建。",
+      "common_user_phrasings": [
+        "我被打垮了怎么重新来",
+        "我现在一无所有了",
+        "失败之后我不敢再试"
+      ],
+      "keywords": ["失败", "低谷", "失业", "破产", "失恋", "羞耻", "重来"],
+      "preferred_lens_clusters": ["will_and_action", "meaning_under_suffering", "stoic_control"],
+      "preferred_sage_names": ["曾国藩", "马可·奥勒留", "维克多·弗兰克尔", "释迦牟尼", "蒙田"]
+    },
+    {
+      "id": "money-status-desire",
+      "name": "金钱、欲望、名望、地位",
+      "definition": "外在成功与内在秩序冲突，用户需要重排欲望结构。",
+      "common_user_phrasings": [
+        "我有钱了还是不快乐",
+        "我很想赢但不想变庸俗",
+        "我太在意别人怎么看我"
+      ],
+      "keywords": ["钱", "名望", "地位", "虚荣", "比较", "欲望", "成功", "体面"],
+      "preferred_lens_clusters": ["desire_simplicity", "detachment_freedom", "authentic_power"],
+      "preferred_sage_names": ["伊壁鸠鲁", "奥古斯丁", "安萨里", "庄子", "尼采"]
+    },
+    {
+      "id": "death-loneliness-finitude",
+      "name": "孤独、死亡、有限性",
+      "definition": "面对失去、老去、不可逆和终点意识。",
+      "common_user_phrasings": [
+        "我怎么面对死亡",
+        "我很怕老去和失去",
+        "我觉得自己越来越孤独"
+      ],
+      "keywords": ["孤独", "死亡", "有限", "衰老", "告别", "终点", "失去"],
+      "preferred_lens_clusters": ["meaning_under_suffering", "suffering_detachment", "mortality_humility"],
+      "preferred_sage_names": ["释迦牟尼", "马可·奥勒留", "维克多·弗兰克尔", "蒙田", "克尔凯郭尔"]
+    },
+    {
+      "id": "action-difficulty",
+      "name": "行动困难、拖延、知行不一",
+      "definition": "认知不缺，缺的是启动、承受、持续和切断借口。",
+      "common_user_phrasings": [
+        "我明知道该做什么就是不做",
+        "我总是拖延",
+        "我老是等完全准备好"
+      ],
+      "keywords": ["拖延", "执行", "完美主义", "卡住", "起不来", "总想太多"],
+      "preferred_lens_clusters": ["will_and_action", "institutional_training", "stoic_control"],
+      "preferred_sage_names": ["王阳明", "曾国藩", "荀子", "马可·奥勒留", "苏格拉底"]
+    },
+    {
+      "id": "cognitive-confusion",
+      "name": "认知混乱、判断失准、概念不清",
+      "definition": "用户说了很多，但没说清自己真正的问题和标准。",
+      "common_user_phrasings": [
+        "我不知道自己到底想要什么",
+        "我脑子很乱",
+        "我不知道该按什么标准选"
+      ],
+      "keywords": ["混乱", "矛盾", "看不清", "想不明白", "标准", "判断", "概念"],
+      "preferred_lens_clusters": ["conceptual_clarity", "virtue_habit", "causal_understanding"],
+      "preferred_sage_names": ["苏格拉底", "亚里士多德", "孔子", "斯宾诺莎"]
+    },
+    {
+      "id": "high-stakes-tradeoff",
+      "name": "高压处境下的取舍与决策",
+      "definition": "时间紧、代价高、没有完美解，需要承担一个清醒代价。",
+      "common_user_phrasings": [
+        "现在必须选但怎么选都疼",
+        "我不能再拖了",
+        "这一步错了代价会很大"
+      ],
+      "keywords": ["立刻", "紧急", "压力", "不能拖", "取舍", "止损", "代价", "风险"],
+      "preferred_lens_clusters": ["strategic_realism", "universal_principle", "will_and_action"],
+      "preferred_sage_names": ["孙子", "马基雅维利", "康德", "王阳明", "马可·奥勒留"]
+    }
+  ],
+  "conflict_types": [
+    {"id": "自由_vs_安全", "description": "想要更多自主，但害怕失去稳定与保护。"},
+    {"id": "真相_vs_和气", "description": "说出真实会破坏关系或秩序。"},
+    {"id": "责任_vs_自我", "description": "继续承担还是忠于自己的边界与生命力。"},
+    {"id": "爱与照顾_vs_边界", "description": "不想伤人，但也不能继续被吞没。"},
+    {"id": "原则_vs_结果", "description": "守住底线还是追求现实效率。"},
+    {"id": "长期完整性_vs_短期生存", "description": "先保住眼前还是不扭曲长期身份。"},
+    {"id": "接受现实_vs_主动改变", "description": "该顺势承受还是该正面改造。"},
+    {"id": "欲望满足_vs_节制秩序", "description": "继续追逐还是减少并重排欲望。"},
+    {"id": "知道正确答案_vs_做不出来", "description": "认知已经够了，但执行启动不了。"},
+    {"id": "意义追求_vs_舒适麻醉", "description": "追求更真实的活法还是继续待在麻醉区。"}
+  ],
+  "blocked_points": [
+    {"id": "标准未定义", "description": "不知道按什么标准判断。"},
+    {"id": "代价不敢付", "description": "其实知道答案，但不敢承担失去。"},
+    {"id": "情绪过载", "description": "焦虑、羞耻、愤怒或悲伤已经淹没判断。"},
+    {"id": "关系绑架", "description": "怕伤人、怕失望、怕被看低、怕不孝。"},
+    {"id": "权力失衡", "description": "现实结构不对称，不只是个人想不通。"},
+    {"id": "选项错觉", "description": "误以为只有 A/B 两条路。"},
+    {"id": "完美主义拖延", "description": "总想等完全确定才开始。"},
+    {"id": "自我叙事失真", "description": "把自己绑进一个僵硬身份故事里。"}
+  ],
+  "seat_functions": [
+    {"id": "anchor", "count": 2, "purpose": "定义问题本质与主要冲突。"},
+    {"id": "coverage", "count": 2, "purpose": "覆盖副分野与真正卡点。"},
+    {"id": "counterbalance", "count": 2, "purpose": "反驳主流倾向，防止单边。"},
+    {"id": "action", "count": 2, "purpose": "把判断翻译成动作与节律。"},
+    {"id": "context", "count": 1, "purpose": "按场景补战略、制度、意义或安定。"},
+    {"id": "wildcard", "count": 1, "purpose": "给更贴题但不那么热门的人一席。"}
+  ],
+  "hard_rules": [
+    "任一 lens_cluster 最多 2 人。",
+    "任一 civilization_block 默认不超过 6 人。",
+    "默认至少 3 人来自主文明块之外，除非问题明显深扎某一传统。",
+    "涉及创业、竞争、组织、权力时，至少 1 人来自 strategic_realism，至少 1 人来自制度或责任镜头。",
+    "涉及焦虑、失去、死亡、虚无时，至少 2 人来自 meaning 或 detachment 相关镜头。",
+    "涉及拖延、知行不一、长期习惯时，至少 2 人来自 will_and_action、virtue_habit 或 institutional_training。",
+    "涉及关系、婚姻、家庭时，至少 1 人来自 role_ethics 或 love_truth，且至少 1 人来自 freedom 或 boundary 相关镜头。",
+    "不要让马基雅维利、韩非子主导哀伤或亲密修复。",
+    "不要让耶稣或孔子在持续伤害场景中用宽恕或责任压制边界。",
+    "不要让老子、庄子、释迦牟尼在创业、权力、谈判题中形成唯一主调。",
+    "不要让尼采在用户明显脆弱、羞耻、虚无时成为唯一主导。",
+    "分数接近时，优先更贴题的人，而不是更有名的人。"
+  ]
+}

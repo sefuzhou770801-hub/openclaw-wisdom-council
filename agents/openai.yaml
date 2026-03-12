@@ -1,0 +1,4 @@
+interface:
+  display_name: "智慧议会 / Wisdom Council"
+  short_description: "先判题，再动态选出十位历史智者，收敛成判断与行动方案"
+  default_prompt: "Use $wisdom-council to classify my situation, build a balanced 10-person wisdom council, and return a judgment with 24-hour and 7-day actions."
