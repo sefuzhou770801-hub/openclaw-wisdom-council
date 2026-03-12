@@ -1,109 +1,63 @@
-# Wisdom Council
+[![中文](https://img.shields.io/badge/Language-%E4%B8%AD%E6%96%87-ff6b6b?style=for-the-badge)](./README.md)
+[![English](https://img.shields.io/badge/Language-English-4c8bf5?style=for-the-badge)](./README.en.md)
+[![Open Skill Spec](https://img.shields.io/badge/Page-Skill%20Spec-111111?style=for-the-badge)](./SKILL.md)
 
-Dynamic historical-wisdom routing for real user dilemmas.
+# 智慧议会
 
-`Wisdom Council` is not a “ten ancient people take turns talking” prompt.
-It is a routing system that:
+针对真实用户困境的历史智慧决策系统。
 
-1. classifies the user's dilemma,
-2. selects the best-fit 10 wisdom lenses from a structured sage pool,
-3. forces disagreement and counterbalance,
-4. converges on a judgment, tradeoffs, and concrete actions.
+很多问题不是缺信息，而是缺判断。
 
-## What It Does
+- 我该不该离婚
+- 我该不该辞职创业
+- 我的合伙人越来越不可靠
+- 我知道该做什么，却一直拖延
+- 我太在意别人的看法
 
-- Turns messy user questions into a structured decision frame.
-- Routes by domain, conflict type, blocked point, urgency, and decision scene.
-- Builds a balanced 10-person council instead of reusing the same famous names.
-- Prevents one-sided outputs like pure self-help, pure ethics, or pure strategy.
-- Forces a final answer with `24-hour actions` and `7-day actions`.
+`智慧议会` 不是“十个古人轮流说话”的角色扮演，而是一个帮助人做决定的思考系统。
 
-## Why It Exists
+它会把用户问题变成决策结构，再动态选择最合适的十种历史智慧视角，让它们围绕同一个问题产生分歧，最后收敛成一个明确判断和可执行的行动方案。
 
-Most “wise advisor” prompts fail in the same way:
-
-- they always use the same people,
-- they confuse topic with true blockage,
-- they flatten disagreement into generic inspiration,
-- they end with vague comfort instead of a judgment.
-
-This skill is designed to do the opposite.
-
-## Core Workflow
+## Workflow
 
 ```text
 User Question
   -> Router
   -> Retriever
   -> Council Builder
-  -> Renderer + Synthesizer
+  -> Renderer
+  -> Synthesizer
   -> Quality Checker
+  -> Final Decision
 ```
 
-## Key Features
+## 用户会得到什么
 
-- `Dynamic classification`
-  Detects primary domain, secondary domains, conflict types, emotional tone, hidden intent, and blocked point.
+- 问题重述
+- 为什么选择这十个视角
+- 十个不同判断角度
+- 主要共识
+- 关键分歧
+- 最终裁决
+- 24 小时行动
+- 7 天行动计划
 
-- `Dynamic sage selection`
-  Chooses the best-fit 10 sages from a structured pool of 32, instead of relying on a fixed roster.
+## 边界
 
-- `Balanced council construction`
-  Uses seat functions like anchor, coverage, counterbalance, action, context, and wildcard.
+- 不编造历史名言
+- 不把明显伤害关系包装成修复关系
+- 不把法律、医疗、税务或投资问题当作纯智慧问题
+- 不以抽象鼓励作为结尾
 
-- `Anti-bias constraints`
-  Prevents overuse of famous figures, repeated lens clusters, civilizational imbalance, and false consensus.
+## 文件结构
 
-- `Action-first synthesis`
-  Produces a judgment, names the cost, and ends with near-term actions.
+- [`SKILL.md`](./SKILL.md)
+- [`references/sages.json`](./references/sages.json)
+- [`references/taxonomy.json`](./references/taxonomy.json)
+- [`references/router_prompt.md`](./references/router_prompt.md)
+- [`references/renderer_prompt.md`](./references/renderer_prompt.md)
+- [`references/eval_cases.json`](./references/eval_cases.json)
 
-## File Map
+一句话理解：
 
-- [`SKILL.md`](./SKILL.md): top-level skill workflow and operating rules
-- [`references/sages.json`](./references/sages.json): structured sage pool
-- [`references/taxonomy.json`](./references/taxonomy.json): domains, conflicts, blocked points, seat functions, hard rules
-- [`references/router_prompt.md`](./references/router_prompt.md): classification and selection logic
-- [`references/renderer_prompt.md`](./references/renderer_prompt.md): output and convergence rules
-- [`references/eval_cases.json`](./references/eval_cases.json): routing sanity checks with 12 test cases
-
-## Typical Use Cases
-
-- Should I get divorced?
-- Should I quit and start a company?
-- I feel anxious and life feels meaningless.
-- My cofounder is unreliable. Do I confront or cut?
-- I know what to do but keep procrastinating.
-- I care too much about what people think.
-- My parents keep interfering with my life.
-- I want to win without becoming hollow or cynical.
-
-## Output Contract
-
-Every good response should contain:
-
-1. Problem restatement
-2. Why these 10 sages were selected
-3. Ten distinct viewpoints
-4. Major consensus
-5. Key disagreements
-6. Final judgment
-7. 24-hour actions
-8. 7-day actions
-9. Next-round deepening path
-
-## Guardrails
-
-- Do not fabricate historical quotes.
-- Do not confuse abuse or structural harm with “repair the relationship.”
-- Do not answer high-stakes legal, medical, tax, or investment questions as if wisdom replaces professional verification.
-- Do not end in abstract encouragement.
-
-## Positioning
-
-This skill is best understood as:
-
-`user problem -> structured dilemma -> dynamic lens routing -> actionable judgment`
-
-Not:
-
-`pick ten famous thinkers -> generate inspirational monologues`
+把一个人的困境，变成一场真正的思想碰撞，最后收敛成一个可以执行的决定。
